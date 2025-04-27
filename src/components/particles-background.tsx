@@ -282,7 +282,7 @@ export default function ParticlesBackground({
       {/* Theme Toggle Button */}
       <button
         onClick={toggleTheme}
-        className="fixed top-4 right-4 p-2 rounded-full bg-white/10 dark:bg-black/10 backdrop-blur-md border border-black/10 dark:border-white/10 text-black dark:text-white hover:bg-white/20 dark:hover:bg-black/20 transition-colors duration-300 z-50"
+        className="fixed top-4 right-4 p-2 rounded-full bg-white/10 dark:bg-black/10 backdrop-blur-md border border-black/10 dark:border-white/10 text-black dark:text-white hover:bg-white/20 dark:hover:bg-black/20 transition-colors duration-300 z-[50]"
         aria-label="Toggle dark mode"
       >
         {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}

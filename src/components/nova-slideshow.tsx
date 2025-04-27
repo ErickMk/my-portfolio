@@ -36,7 +36,7 @@ export function NovaSlideshow() {
             src={images[currentImage]}
             alt={`Nova AI System Screenshot ${currentImage + 1}`}
             fill
-            className="object-contain"
+            className="object-cover"
             priority
             quality={100}
           />

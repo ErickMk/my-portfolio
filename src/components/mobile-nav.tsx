@@ -19,14 +19,14 @@ export function MobileNav({ sections, onNavigate, activeSection }: MobileNavProp
       <Button
         variant="ghost"
         size="icon"
-        className="relative z-50"
+        className="relative z-[60]"
         onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </Button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-40 bg-zinc-900/80 backdrop-blur-lg">
+        <div className="fixed inset-0 z-[55] bg-zinc-900/80 backdrop-blur-lg">
           <div className="container flex min-h-screen flex-col items-center justify-center space-y-4">
             {sections.map((section) => (
               <Button
