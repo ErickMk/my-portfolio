@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useMemo } from "react"
 import Link from "next/link"
 import {
   Mail,
@@ -29,14 +29,24 @@ import ProfileSwitcher from "@/components/profile-switcher"
 export default function Home() {
   const isMobile = useMobile()
   const [activeSection, setActiveSection] = useState("about")
-  const sectionRefs = {
-    about: useRef<HTMLElement>(null),
-    projects: useRef<HTMLElement>(null),
-    strengths: useRef<HTMLElement>(null),
-    highlights: useRef<HTMLElement>(null),
-    exploring: useRef<HTMLElement>(null),
-    contact: useRef<HTMLElement>(null),
-  }
+  
+  // Create refs outside of useMemo
+  const aboutRef = useRef<HTMLElement>(null)
+  const projectsRef = useRef<HTMLElement>(null)
+  const strengthsRef = useRef<HTMLElement>(null)
+  const highlightsRef = useRef<HTMLElement>(null)
+  const exploringRef = useRef<HTMLElement>(null)
+  const contactRef = useRef<HTMLElement>(null)
+
+  // Use useMemo to create the sectionRefs object
+  const sectionRefs = useMemo(() => ({
+    about: aboutRef,
+    projects: projectsRef,
+    strengths: strengthsRef,
+    highlights: highlightsRef,
+    exploring: exploringRef,
+    contact: contactRef,
+  }), [])
 
   useEffect(() => {
     const handleScroll = () => {
