@@ -34,7 +34,7 @@ export function MobileNav({ sections, onNavigate, activeSection }: MobileNavProp
           />
           
           {/* Sidebar */}
-          <div className="fixed right-0 top-0 z-[60] h-full w-[280px] bg-zinc-900/95 border-l border-zinc-800/50 shadow-xl transform transition-transform duration-300 ease-in-out">
+          <div className="fixed right-0 top-0 z-[60] h-screen w-[280px] bg-zinc-900/95 border-l border-zinc-800/50 shadow-xl transform transition-transform duration-300 ease-in-out overflow-hidden">
             <div className="flex flex-col h-full">
               {/* Header */}
               <div className="p-4 border-b border-zinc-800/50 bg-zinc-900/95">
