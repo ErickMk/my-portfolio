@@ -262,7 +262,7 @@ export default function Home() {
           </div>
         </motion.section>
 
-        {/* What I'm Building Section */}
+        {/* What I&apos;m Building Section */}
         <motion.section
           ref={sectionRefs.projects}
           id="projects"
@@ -371,7 +371,7 @@ export default function Home() {
               {
                 icon: <Server className="h-5 w-5 text-primary" />,
                 title: "Systems Thinking",
-                description: "Architected Nova's modular, extensible optimization framework from the ground up.",
+                description: "Architected Nova&apos;s modular, extensible optimization framework from the ground up.",
               },
               {
                 icon: <Brain className="h-5 w-5 text-primary" />,
@@ -443,7 +443,7 @@ export default function Home() {
             {[
               {
                 icon: <Rocket className="h-4 w-4 text-primary" />,
-                title: "Developed Nova's Unified Optimizer",
+                title: "Developed Nova&apos;s Unified Optimizer",
                 subtitle: "Python, Numba, Torch, NumPy",
               },
               {
@@ -631,4 +631,4 @@ export default function Home() {
       </footer>
     </div>
   )
-}
+} 
