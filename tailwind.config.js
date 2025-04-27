@@ -60,6 +60,35 @@ module.exports = {
   			'gradient-conic':
   				'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
   		},
+  		transitionDuration: {
+  			'150': '150ms',
+  			'200': '200ms',
+  			'250': '250ms',
+  		},
+  		keyframes: {
+  			"fade-in": {
+  				"0%": { opacity: "0", transform: "translateZ(0)" },
+  				"100%": { opacity: "1", transform: "translateZ(0)" },
+  			},
+  			"fade-out": {
+  				"0%": { opacity: "1", transform: "translateZ(0)" },
+  				"100%": { opacity: "0", transform: "translateZ(0)" },
+  			},
+  			"slide-in-from-right": {
+  				"0%": { transform: "translateX(100%) translateZ(0)" },
+  				"100%": { transform: "translateX(0) translateZ(0)" },
+  			},
+  			"slide-out-to-right": {
+  				"0%": { transform: "translateX(0) translateZ(0)" },
+  				"100%": { transform: "translateX(100%) translateZ(0)" },
+  			},
+  		},
+  		animation: {
+  			"fade-in": "fade-in 200ms ease-out",
+  			"fade-out": "fade-out 150ms ease-in",
+  			"slide-in": "slide-in-from-right 200ms ease-out",
+  			"slide-out": "slide-out-to-right 150ms ease-in",
+  		},
   	}
   },
   plugins: [],

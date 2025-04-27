@@ -23,6 +23,9 @@ import { Badge } from "@/components/ui/badge"
 import { motion } from "framer-motion"
 import { useMobile } from "@/hooks/use-mobile"
 import { cn } from "@/lib/utils"
+import { MobileNav } from "@/components/mobile-nav"
+import { NovaSlideshow } from "@/components/nova-slideshow"
+import ProfileSwitcher from "@/components/profile-switcher"
 
 export default function Home() {
   const isMobile = useMobile()
@@ -66,14 +69,14 @@ export default function Home() {
     show: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
+        staggerChildren: 0.05,
       },
     },
   }
 
   const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+    hidden: { opacity: 0, y: 10 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.25 } },
   }
 
   // Define exploring items separately to fix type issues
@@ -96,6 +99,19 @@ export default function Home() {
       description: "Targeting Nova to critical systems, edge devices, and sustainable cloud environments",
     },
   ]
+
+  // Create navigation sections for the mobile menu
+  const navigationSections = Object.keys(sectionRefs).map(section => ({
+    id: section,
+    label: section.charAt(0).toUpperCase() + section.slice(1)
+  }))
+  
+  // Function to handle section navigation
+  const handleSectionNavigation = (sectionId: string) => {
+    sectionRefs[sectionId as keyof typeof sectionRefs].current?.scrollIntoView({
+      behavior: "smooth",
+    })
+  }
 
   return (
     <div className="relative z-10 min-h-screen bg-transparent text-zinc-100">
@@ -120,24 +136,25 @@ export default function Home() {
           <div className="flex gap-6 md:gap-10">
             <Link href="/" className="flex items-center space-x-2">
               <motion.span
-                className="inline-block font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70"
+                className="inline-block font-bold text-lg sm:text-xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70"
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.2 }}
               >
-                Erick Mungai Kimani
+                Erick M. Kimani
               </motion.span>
             </Link>
           </div>
           <div className="flex flex-1 items-center justify-end space-x-4">
-            <nav className="flex items-center space-x-2">
+            {/* Desktop navigation */}
+            <nav className="hidden md:flex items-center space-x-1 sm:space-x-2 pb-1 px-1">
               {Object.keys(sectionRefs).map((section) => (
                 <Button
                   key={section}
                   variant={activeSection === section ? "default" : "ghost"}
                   size="sm"
                   className={cn(
-                    "relative overflow-hidden transition-all duration-300",
+                    "relative overflow-hidden transition-all duration-300 text-xs sm:text-sm whitespace-nowrap",
                     activeSection === section ? "text-zinc-900" : "text-zinc-400 hover:text-zinc-100",
                   )}
                   onClick={() => {
@@ -148,72 +165,76 @@ export default function Home() {
                 >
                   {section.charAt(0).toUpperCase() + section.slice(1)}
                   {activeSection === section && (
-                    <motion.div className="absolute bottom-0 left-0 h-0.5 w-full bg-primary" layoutId="underline" />
+                    <motion.div 
+                      className="absolute bottom-0 left-0 h-0.5 w-full bg-primary" 
+                      layoutId="underline"
+                      transition={{ duration: 0.15 }}
+                    />
                   )}
                 </Button>
               ))}
             </nav>
+            
+            {/* Mobile navigation */}
+            <MobileNav 
+              sections={navigationSections}
+              onNavigate={handleSectionNavigation}
+              activeSection={activeSection}
+            />
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
         {/* Hero Section */}
         <motion.section
           ref={sectionRefs.about}
           id="about"
-          className="py-12 md:py-24 lg:py-32 flex flex-col items-center text-center"
+          className="py-8 sm:py-12 md:py-24 lg:py-32 flex flex-col items-center text-center"
           initial="hidden"
           whileInView="show"
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.3 }}
           variants={container}
         >
-          <div className="mx-auto max-w-[800px] space-y-6">
+          <div className="mx-auto max-w-[800px] space-y-4 sm:space-y-6">
             <motion.div
-              className="relative mx-auto h-40 w-40 overflow-hidden rounded-full border-4 border-zinc-800 bg-zinc-800 shadow-xl"
+              className="relative mx-auto w-full max-w-[280px] sm:max-w-[320px] md:max-w-[360px]"
               variants={item}
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300, damping: 10 }}
+              whileHover={{ scale: 1.02 }}
+              transition={{ type: "spring", stiffness: 500, damping: 25 }}
             >
-              <Image
-                src="/placeholder.svg?height=160&width=160"
-                alt="Erick Mungai Kimani"
-                width={160}
-                height={160}
-                className="object-cover"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/80 to-transparent" />
+              <ProfileSwitcher />
             </motion.div>
             <motion.h1
-              className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70"
+              className="text-3xl sm:text-4xl font-bold tracking-tighter md:text-5xl lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70"
               variants={item}
             >
-              Erick Mungai Kimani
+              Erick M. Kimani
             </motion.h1>
-            <motion.h2 className="text-xl text-zinc-400 md:text-2xl" variants={item}>
+            <motion.h2 className="text-lg sm:text-xl text-zinc-400 md:text-2xl" variants={item}>
               Systems Optimizer • AI Researcher • Performance Engineer
             </motion.h2>
             <motion.div className="flex flex-wrap justify-center gap-2" variants={item}>
               <Badge
                 variant="outline"
-                className="text-sm border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors duration-300"
+                className="text-xs sm:text-sm border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors duration-300"
               >
                 📍 Based in Kenya
               </Badge>
               <Badge
                 variant="outline"
-                className="text-sm border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors duration-300"
+                className="text-xs sm:text-sm border-primary/20 bg-primary/5 hover:bg-primary/10 transition-colors duration-300"
               >
                 🚀 Engineering Nova
               </Badge>
             </motion.div>
-            <motion.p className="text-zinc-400 md:text-xl" variants={item}>
+            <motion.p className="text-sm sm:text-base text-zinc-400 md:text-xl" variants={item}>
               Building the future of smarter, greener compute
             </motion.p>
-            <motion.div className="flex justify-center gap-4" variants={item}>
+            <motion.div className="flex justify-center gap-3 sm:gap-4" variants={item}>
               <Button
-                className="relative overflow-hidden group"
+                className="relative overflow-hidden group text-xs sm:text-sm"
+                size={isMobile ? "sm" : "default"}
                 onClick={() => {
                   sectionRefs.contact.current?.scrollIntoView({
                     behavior: "smooth",
@@ -225,7 +246,8 @@ export default function Home() {
               </Button>
               <Button
                 variant="outline"
-                className="relative overflow-hidden group border-zinc-700 hover:border-primary/50"
+                size={isMobile ? "sm" : "default"}
+                className="relative overflow-hidden group border-zinc-700 hover:border-primary/50 text-xs sm:text-sm"
                 onClick={() => {
                   sectionRefs.projects.current?.scrollIntoView({
                     behavior: "smooth",
@@ -262,19 +284,14 @@ export default function Home() {
 
           <motion.div
             variants={item}
-            whileHover={{ y: -5 }}
-            transition={{ type: "spring", stiffness: 300, damping: 10 }}
+            whileHover={{ y: -3 }}
+            transition={{ type: "spring", stiffness: 500, damping: 25 }}
           >
             <Card className="overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300 bg-zinc-800/50 backdrop-blur-sm border border-zinc-700">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="relative h-[300px] md:h-full overflow-hidden">
-                  <Image
-                    src="/placeholder.svg?height=600&width=600"
-                    alt="Nova AI System"
-                    fill
-                    className="object-cover transition-transform duration-700 hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/90 to-zinc-900/30" />
+                  <NovaSlideshow />
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/50 to-zinc-900/10" />
 
                   {/* Performance metrics visualization */}
                   <div className="absolute bottom-4 left-4 right-4 bg-zinc-900/80 backdrop-blur-sm p-3 rounded-md border border-zinc-700">
@@ -386,8 +403,8 @@ export default function Home() {
               <motion.div
                 key={index}
                 variants={item}
-                whileHover={{ y: -5, scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                whileHover={{ y: -3, scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 500, damping: 25 }}
               >
                 <Card className="h-full border border-zinc-800 bg-zinc-800/50 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 hover:shadow-lg group">
                   <CardContent className="pt-6 h-full flex flex-col">
@@ -449,8 +466,8 @@ export default function Home() {
               <motion.div
                 key={index}
                 variants={item}
-                whileHover={{ x: 5 }}
-                transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                whileHover={{ x: 3 }}
+                transition={{ type: "spring", stiffness: 500, damping: 25 }}
               >
                 <Card className="border border-zinc-800 bg-zinc-800/50 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 hover:shadow-md group">
                   <CardContent className="p-6">
@@ -489,21 +506,21 @@ export default function Home() {
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {exploringItems.map((item, index) => (
+            {exploringItems.map((exploringItem, index) => (
               <motion.div
                 key={index}
                 variants={item}
                 whileHover={{ scale: 1.02 }}
-                transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                transition={{ type: "spring", stiffness: 500, damping: 25 }}
               >
                 <Card className="h-full border border-zinc-800 bg-zinc-800/50 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 hover:shadow-lg group">
-                  <CardContent className="p-6 space-y-2 h-full flex flex-col">
+                  <CardContent className="p-4 sm:p-6 space-y-2 h-full flex flex-col">
                     <h3 className="text-lg font-semibold flex items-center group-hover:text-primary transition-colors duration-300">
-                      {item.title}
+                      {exploringItem.title}
                       <ChevronRight className="h-4 w-4 ml-1 opacity-0 group-hover:opacity-100 transform translate-x-0 group-hover:translate-x-1 transition-all duration-300" />
                     </h3>
-                    <p className="text-zinc-400 group-hover:text-zinc-300 transition-colors duration-300">
-                      {item.description}
+                    <p className="text-sm sm:text-base text-zinc-400 group-hover:text-zinc-300 transition-colors duration-300">
+                      {exploringItem.description}
                     </p>
                   </CardContent>
                 </Card>
@@ -532,7 +549,7 @@ export default function Home() {
           </motion.div>
 
           <motion.div className="mx-auto max-w-md space-y-4" variants={item}>
-            <motion.div whileHover={{ y: -5 }} transition={{ type: "spring", stiffness: 300, damping: 10 }}>
+            <motion.div whileHover={{ y: -3 }} transition={{ type: "spring", stiffness: 500, damping: 25 }}>
               <Card className="overflow-hidden border border-zinc-800 bg-zinc-800/50 backdrop-blur-sm hover:border-primary/30 transition-all duration-300 hover:shadow-lg">
                 <CardContent className="p-6">
                   <div className="space-y-4">
@@ -593,7 +610,7 @@ export default function Home() {
               className="text-center"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.5, duration: 0.5 }}
+              transition={{ delay: 0.2, duration: 0.3 }}
             >
               <p className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
                 🚀 Let's build the future of intelligent, sustainable compute together.
@@ -605,10 +622,10 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="border-t border-zinc-800 bg-zinc-900/80 backdrop-blur-sm">
-        <div className="container flex flex-col items-center justify-between gap-4 py-10 md:h-24 md:flex-row md:py-0">
+        <div className="container flex flex-col items-center justify-between gap-4 py-6 md:h-24 md:flex-row md:py-0">
           <div className="flex flex-col items-center gap-4 px-8 md:flex-row md:gap-2 md:px-0">
-            <p className="text-center text-sm leading-loose text-zinc-400 md:text-left">
-              © 2025 Erick Mungai Kimani. All rights reserved.
+            <p className="text-center text-xs sm:text-sm leading-loose text-zinc-400 md:text-left">
+              © 2025 Erick M. Kimani. All rights reserved.
             </p>
           </div>
         </div>

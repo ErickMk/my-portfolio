@@ -115,7 +115,7 @@ export default function ParticlesBackground({
     const canvas = canvasRef.current
     if (!canvas) return
 
-    const ctx = canvas.getContext("2d", { alpha: true })
+    const ctx = canvas.getContext("2d", { alpha: true, willReadFrequently: false })
     if (!ctx) return
 
     // Set canvas dimensions to window size
@@ -126,8 +126,11 @@ export default function ParticlesBackground({
 
     resizeCanvas()
 
-    // Initialize particles
-    const particles: Particle[] = Array.from({ length: particleCount }, () => ({
+    // Initialize particles - reduce count on mobile
+    const isMobile = window.innerWidth < 768
+    const actualParticleCount = isMobile ? Math.floor(particleCount * 0.6) : particleCount
+    
+    const particles: Particle[] = Array.from({ length: actualParticleCount }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
       size: Math.random() * (particleSize.max - particleSize.min) + particleSize.min,
@@ -136,55 +139,117 @@ export default function ParticlesBackground({
       maxLife: 100 + Math.random() * 50,
     }))
 
-    const animate = () => {
-      const isDark = document.documentElement.classList.contains("dark")
+    // Use a fixed time step for more consistent animation
+    const targetFPS = 60
+    const timeStep = 1000 / targetFPS
+    let lastTime = 0
+    let accumulator = 0
+    
+    // Throttle animation on low-end devices
+    let frameSkip = 0
+    const maxFrameSkip = isMobile ? 2 : 0
+    
+    const animate = (currentTime: number) => {
+      // Calculate delta time
+      const deltaTime = currentTime - lastTime
+      lastTime = currentTime
       
-      // Semi-transparent background for trails - reduced opacity in light mode
-      ctx.fillStyle = isDark ? "rgba(0, 0, 0, 0.1)" : "rgba(245, 245, 245, 0.1)"
-      ctx.fillRect(0, 0, canvas.width, canvas.height)
-
-      for (const particle of particles) {
-        particle.life += 1
-        if (particle.life > particle.maxLife) {
-          particle.life = 0
-          particle.x = Math.random() * canvas.width
-          particle.y = Math.random() * canvas.height
-        }
-
-        // Pure noise-based movement
-        const n = noise.simplex3(particle.x * noiseIntensity, particle.y * noiseIntensity, Date.now() * 0.0001)
-        const angle = n * Math.PI * 4
-        
-        particle.velocity.x = Math.cos(angle) * 2
-        particle.velocity.y = Math.sin(angle) * 2
-
-        // Update position
-        particle.x += particle.velocity.x
-        particle.y += particle.velocity.y
-
-        // Wrap around edges
-        if (particle.x < 0) particle.x = canvas.width
-        if (particle.x > canvas.width) particle.x = 0
-        if (particle.y < 0) particle.y = canvas.height
-        if (particle.y > canvas.height) particle.y = 0
-
-        // Draw particle with fade-in/fade-out based on life cycle
-        // Increased opacity in light mode for better visibility
-        const opacity = Math.sin((particle.life / particle.maxLife) * Math.PI) * (isDark ? 0.15 : 0.2)
-        ctx.fillStyle = isDark ? `rgba(255, 255, 255, ${opacity})` : `rgba(60, 60, 70, ${opacity})`
-        
-        ctx.beginPath()
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2)
-        ctx.fill()
+      // Accumulate time since last frame
+      accumulator += deltaTime
+      
+      // Skip frames on low-end devices
+      if (frameSkip > 0) {
+        frameSkip--
+        requestAnimationFrame(animate)
+        return
       }
-
+      
+      // Only update if enough time has accumulated
+      if (accumulator >= timeStep) {
+        const isDark = document.documentElement.classList.contains("dark")
+        
+        // Semi-transparent background for trails - reduced opacity in light mode
+        ctx.fillStyle = isDark ? "rgba(0, 0, 0, 0.1)" : "rgba(245, 245, 245, 0.1)"
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        
+        // Process in batch for improved performance
+        const batchSize = 100
+        for (let i = 0; i < particles.length; i += batchSize) {
+          const end = Math.min(i + batchSize, particles.length)
+          
+          for (let j = i; j < end; j++) {
+            const particle = particles[j]
+            
+            particle.life += 1
+            if (particle.life > particle.maxLife) {
+              particle.life = 0
+              particle.x = Math.random() * canvas.width
+              particle.y = Math.random() * canvas.height
+            }
+    
+            // Pure noise-based movement - optimize calculation
+            const n = noise.simplex3(
+              particle.x * noiseIntensity, 
+              particle.y * noiseIntensity, 
+              (currentTime * 0.0001) % 10000
+            )
+            const angle = n * Math.PI * 4
+            
+            particle.velocity.x = Math.cos(angle) * 2
+            particle.velocity.y = Math.sin(angle) * 2
+    
+            // Update position
+            particle.x += particle.velocity.x
+            particle.y += particle.velocity.y
+    
+            // Wrap around edges
+            if (particle.x < 0) particle.x = canvas.width
+            if (particle.x > canvas.width) particle.x = 0
+            if (particle.y < 0) particle.y = canvas.height
+            if (particle.y > canvas.height) particle.y = 0
+    
+            // Draw particle with fade-in/fade-out based on life cycle
+            const opacity = Math.sin((particle.life / particle.maxLife) * Math.PI) * (isDark ? 0.15 : 0.2)
+            ctx.fillStyle = isDark ? `rgba(255, 255, 255, ${opacity})` : `rgba(60, 60, 70, ${opacity})`
+            
+            // Faster circle drawing for small particles
+            const size = particle.size
+            if (size <= 1) {
+              ctx.fillRect(particle.x, particle.y, size, size)
+            } else {
+              ctx.beginPath()
+              ctx.arc(particle.x, particle.y, size, 0, Math.PI * 2)
+              ctx.fill()
+            }
+          }
+        }
+        
+        // Reset accumulator
+        accumulator = 0
+        
+        // Set frame skip for next frame if mobile
+        frameSkip = isMobile ? maxFrameSkip : 0
+      }
+      
+      // Request next frame
       requestAnimationFrame(animate)
     }
 
-    animate()
+    // Start animation loop
+    requestAnimationFrame(animate)
 
-    window.addEventListener("resize", resizeCanvas)
-    return () => window.removeEventListener("resize", resizeCanvas)
+    // Throttle resize events
+    let resizeTimeout: ReturnType<typeof setTimeout>
+    const handleResize = () => {
+      clearTimeout(resizeTimeout)
+      resizeTimeout = setTimeout(resizeCanvas, 200)
+    }
+    
+    window.addEventListener("resize", handleResize, { passive: true })
+    return () => {
+      window.removeEventListener("resize", handleResize)
+      clearTimeout(resizeTimeout)
+    }
   }, [particleCount, noiseIntensity, particleSize, noise])
 
   // Handle theme toggle

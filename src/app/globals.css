@@ -59,11 +59,50 @@
   ::selection {
     @apply bg-primary/20 text-primary;
   }
+  
+  /* Improve touch target sizes for mobile */
+  @media (max-width: 640px) {
+    button, a, [role="button"] {
+      @apply min-h-[2.5rem] px-3;
+    }
+  }
+  
+  /* Prevent text size adjustment after orientation changes on mobile */
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  
+  /* Improve tap highlight color on mobile */
+  a, button, input, select, textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Add spacing for mobile viewport */
+  @media (max-width: 640px) {
+    section {
+      @apply py-6;
+    }
+    
+    h1 {
+      @apply text-2xl;
+    }
+    
+    h2 {
+      @apply text-xl;
+    }
+    
+    h3 {
+      @apply text-lg;
+    }
+  }
 }
 
-/* Smooth scrolling */
+/* Smooth scrolling with performance optimizations */
 html {
   scroll-behavior: smooth;
+  
+  /* Safe area insets for notched devices */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 /* Custom animations */
@@ -72,7 +111,7 @@ html {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-6px);
   }
   100% {
     transform: translateY(0px);
@@ -80,7 +119,8 @@ html {
 }
 
 .animate-float {
-  animation: float 6s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
+  will-change: transform;
 }
 
 /* Gradient text */
@@ -100,7 +140,24 @@ html {
 }
 
 .circuit-pattern {
-  animation: circuit-pulse 10s ease-in-out infinite;
+  animation: circuit-pulse 8s ease-in-out infinite;
+}
+
+/* Performance optimizations for animations */
+.card, .button, [role="button"], .animate-in, .animate-out {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  transition-duration: 200ms !important;
+}
+
+/* Optimize transition durations */
+.transition-all, 
+.transition-colors, 
+.transition-opacity, 
+.transition-shadow,
+.transition-transform {
+  transition-duration: 200ms !important;
 }
 
 /* Light mode specific adjustments */
@@ -119,4 +176,37 @@ html {
 /* Ensure badges are readable in light mode */
 .light .badge {
   @apply border-primary/30 bg-primary/10 text-primary;
+}
+
+/* Mobile-specific overrides */
+@media (max-width: 640px) {
+  /* Reduce motion on mobile for better performance */
+  .animate-float {
+    animation-duration: 6s;
+  }
+  
+  /* Improve tap targets */
+  .card {
+    @apply touch-manipulation;
+  }
+  
+  /* Add more space between stacked elements */
+  .space-y-4 > * + * {
+    @apply mt-5;
+  }
+  
+  /* Ensure buttons are easier to tap */
+  .btn, button, [role="button"] {
+    @apply touch-manipulation;
+  }
+  
+  /* Reduce motion for performance */
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
