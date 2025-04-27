@@ -381,7 +381,7 @@ export default function Home() {
               {
                 icon: <Server className="h-5 w-5 text-primary" />,
                 title: "Systems Thinking",
-                description: "Architected Nova&apos;s modular, extensible optimization framework from the ground up.",
+                description: "Architected Nova's modular, extensible optimization framework from the ground up.",
               },
               {
                 icon: <Brain className="h-5 w-5 text-primary" />,
@@ -453,7 +453,7 @@ export default function Home() {
             {[
               {
                 icon: <Rocket className="h-4 w-4 text-primary" />,
-                title: "Developed Nova&apos;s Unified Optimizer",
+                title: "Developed Nova's Unified Optimizer",
                 subtitle: "Python, Numba, Torch, NumPy",
               },
               {
