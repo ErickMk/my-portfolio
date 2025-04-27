@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import {
   Mail,
@@ -62,7 +61,7 @@ export default function Home() {
     return () => {
       window.removeEventListener("scroll", handleScroll)
     }
-  }, [])
+  }, [sectionRefs])
 
   const container = {
     hidden: { opacity: 0 },
@@ -275,7 +274,7 @@ export default function Home() {
         >
           <motion.div className="space-y-4 text-center" variants={item}>
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-              🚧 What I'm Building
+              🚧 What I&apos;m Building
             </h2>
             <p className="mx-auto max-w-[700px] text-zinc-400 md:text-xl">
               Pioneering the next generation of computational optimization
@@ -541,7 +540,7 @@ export default function Home() {
         >
           <motion.div className="space-y-4 text-center" variants={item}>
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-              📫 Let's Connect
+              📫 Let&apos;s Connect
             </h2>
             <p className="mx-auto max-w-[700px] text-zinc-400 md:text-xl">
               Reach out to discuss collaboration opportunities
@@ -613,7 +612,7 @@ export default function Home() {
               transition={{ delay: 0.2, duration: 0.3 }}
             >
               <p className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-                🚀 Let's build the future of intelligent, sustainable compute together.
+                🚀 Let&apos;s build the future of intelligent, sustainable compute together.
               </p>
             </motion.div>
           </motion.div>
