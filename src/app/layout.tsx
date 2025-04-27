@@ -35,7 +35,7 @@ export default function RootLayout({
       <body className={`${inter.className} h-full antialiased text-zinc-800 dark:text-zinc-200 touch-manipulation`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
           storageKey="portfolio-theme"

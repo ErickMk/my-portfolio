@@ -7,7 +7,7 @@ import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
 export default function ProfileSwitcher() {
-  const [activeProfile, setActiveProfile] = useState<"color" | "bw">("color")
+  const [activeProfile, setActiveProfile] = useState<"color" | "bw">("bw")
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Track touch/swipe events
